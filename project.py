@@ -21,8 +21,6 @@ import numpy as np
 
 #%%
 
-stop_words = set(stopwords.words('spanish'))
-
 data = pd.read_csv('/Users/mazcu/Documents/UPV/3º/2º Cuatrimestre/LNR/DATASET_DETOXIS.csv')
 
 def read_data(data):
@@ -37,25 +35,45 @@ def preprocess_tweet_text(tweet):
     tweet = re.sub(r"http\S+|www\S+|https\S+", "" ,tweet , flags=re.MULTILINE)
     # REMOVE @ AND #
     tweet = re.sub(r"\@\w+|\#", "", tweet)
+    # REMOVE EMOJIS AND EMOTICONES
+    tweet = re.sub(r"[\U00010000-\U0010ffff]|:\)|:\(|XD|xD|;\)|:,\(|:D|D:", "", tweet)
     # REMOVE PUNCTUATIONS
     tweet = tweet.translate(str.maketrans('', '', string.punctuation))
     #REMOVE STOPWORDS
     tweet_tokens = word_tokenize(tweet)
+    filtered = [w for w in tweet_tokens if not w in set(stopwords.words('spanish'))]
     
+    ps = PorterStemmer()
+    stemmed_words = [ps.stem(w) for w in filtered]
+    lemmatizer = WordNetLemmatizer()
+    lemma_words = [lemmatizer.lemmatize(w, pos='a') for w in stemmed_words]
+    return " ".join(lemma_words)
     
-    
-    
-    
-    
+texts, t1_label, t2_label = read_data(data)
+tweets_cleaned = [preprocess_tweet_text(tweet) for tweet in texts]
 
 #%%
-stop_words
-#%% Data path.
+tweets_cleaned = [preprocess_tweet_text(tweet) for tweet in texts]
+#%% BAG OF WORDS
 
-data = pd.read_csv('/Users/mazcu/Documents/UPV/3º/2º Cuatrimestre/LNR/DATASET_DETOXIS.csv') 
-#%%
+from sklearn.feature_extraction.text import CountVectorizer
 
-data.head()
+vectorizer = CountVectorizer()
+vectorizer.fit(tweets_cleaned)
+
+# PARA SABER QUÉ FORMA EL VOCABULARIO vectorizer.get_feature_names()
+
+X_bag_of_words = vectorizer.transform(tweets_cleaned)
+#%% N-GRAMAS
+
+ngram_vectorizer = CountVectorizer(analyzer='word', ngram_range=(3, 3))
+counts = ngram_vectorizer.fit_transform(tweets_cleaned)
+counts.toarray().astype(int)
+
+# %% TD-IDF
+
+
+
 #%%
 cols = ['comment', 'toxicity', 'toxicity_level']
 df = pd.DataFrame()
@@ -66,6 +84,13 @@ df['comment'][46].lower()
 
 #%%
 
-import nltk
+prueba = df[df['comment'].str.contains("RT @")]
+# %%
+prueba['comment']
+# %%
 
-nltk.download('stopwords')
+# %%
+
+# %%
+
+# %%
