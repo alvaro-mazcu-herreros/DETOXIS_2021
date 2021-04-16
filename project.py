@@ -47,14 +47,13 @@ def preprocess_tweet_text(tweet):
     stemmed_words = [ps.stem(w) for w in filtered]
     lemmatizer = WordNetLemmatizer()
     lemma_words = [lemmatizer.lemmatize(w, pos='a') for w in stemmed_words]
-    return " ".join(lemma_words)
+    return " ".join(lemma_words) #NO TOKENIZADO
     
 texts, t1_label, t2_label = read_data(data)
 tweets_cleaned = [preprocess_tweet_text(tweet) for tweet in texts]
 
-#%%
-tweets_cleaned = [preprocess_tweet_text(tweet) for tweet in texts]
 #%% BAG OF WORDS
+# El bag of words no necesita el texto tokenizado, lo hace él
 
 from sklearn.feature_extraction.text import CountVectorizer
 
@@ -72,25 +71,49 @@ counts.toarray().astype(int)
 
 # %% TD-IDF
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+tfidf_vectorizer = TfidfVectorizer()
+tfidf_vectorizer.fit(tweets_cleaned)
+
+#tfidf_vectorizer.vocabulary_ #TO KNOW THE IMPORTANCE OF EACH WORD
+
+#%% WORDS EMBEDDINGS
+
+def preprocess_tweet_text(tweet):
+    tweet = tweet.lower()
+    # REMOVE URL
+    tweet = re.sub(r"http\S+|www\S+|https\S+", "" ,tweet , flags=re.MULTILINE)
+    # REMOVE @ AND #
+    tweet = re.sub(r"\@\w+|\#", "", tweet)
+    # REMOVE EMOJIS AND EMOTICONES
+    tweet = re.sub(r"[\U00010000-\U0010ffff]|:\)|:\(|XD|xD|;\)|:,\(|:D|D:", "", tweet)
+    # REMOVE PUNCTUATIONS
+    tweet = tweet.translate(str.maketrans('', '', string.punctuation))
+    #REMOVE STOPWORDS
+    tweet_tokens = word_tokenize(tweet)
+    filtered = [w for w in tweet_tokens if not w in set(stopwords.words('spanish'))]
+    
+    ps = PorterStemmer()
+    stemmed_words = [ps.stem(w) for w in filtered]
+    lemmatizer = WordNetLemmatizer()
+    lemma_words = [lemmatizer.lemmatize(w, pos='a') for w in stemmed_words]
+    return lemma_words #TOKENIZADO
+    
+texts, t1_label, t2_label = read_data(data)
+tweets_cleaned = [preprocess_tweet_text(tweet) for tweet in texts]
 
 
-#%%
-cols = ['comment', 'toxicity', 'toxicity_level']
-df = pd.DataFrame()
-for col in cols:
-    df[col] = data[col]
+#   WORD2VEC
+
+from gensim.models import Word2Vec
+
+model = Word2Vec(
+        tweets_cleaned,
+        vector_size=30,
+        min_count=5)
+
+model.wv.most_similar('africa')
+
 # %%
-df['comment'][46].lower()
 
-#%%
-
-prueba = df[df['comment'].str.contains("RT @")]
-# %%
-prueba['comment']
-# %%
-
-# %%
-
-# %%
-
-# %%
