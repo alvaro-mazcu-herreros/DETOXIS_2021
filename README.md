@@ -10,6 +10,6 @@ The presence of toxic messages on social media and the need to identify and miti
 
 DETOXIS is the first task that focuses on the detection of different levels of toxicity in comments posted in response to news articles written in Spanish.
 
-## Our Proposal
+## Our Proposal - Dembo Team
 
 If you want to read the proposal made by our group, you can read our <a href="https://github.com/alvaro-mazcu-herreros/LNR_project/blob/main/report/Mar%C3%ADnM_Mazcu%C3%B1%C3%A1nA_Paper.pdf" rel="nofollow">paper</a>
