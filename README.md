@@ -12,4 +12,4 @@ DETOXIS is the first task that focuses on the detection of different levels of t
 
 ## Our Proposal - Dembo Team
 
-If you want to read the proposal made by our group, you can read our <a href="https://github.com/alvaro-mazcu-herreros/LNR_project/blob/main/report/DETOXIS__PAPER.pdf" rel="nofollow">paper</a>
+If you want to read the proposal made by our group, you can read our <a href="https://github.com/alvaro-mazcu-herreros/DETOXIS_2021/blob/main/report/Mari%CC%81nM_Mazcun%CC%83a%CC%81nA_Paper1%201.pdf" rel="nofollow">paper</a>
